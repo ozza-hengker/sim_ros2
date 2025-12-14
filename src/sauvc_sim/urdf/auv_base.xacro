@@ -1,0 +1,116 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="sauvc_bot">
+
+    <material name="blue"><color rgba="0 0 0.8 1"/></material>
+    <material name="red"><color rgba="0.8 0 0 1"/></material>
+    <material name="green"><color rgba="0 0.8 0 1"/></material>
+    <material name="black"><color rgba="0 0 0 1"/></material>
+
+    <link name="base_link">
+        <visual>
+            <geometry><box size="0.4 0.3 0.2"/></geometry>
+            <material name="blue"/>
+        </visual>
+        <collision>
+            <geometry><box size="0.4 0.3 0.2"/></geometry>
+        </collision>
+        <inertial>
+            <mass value="23.7"/>
+            <origin xyz="0 0 -0.1" rpy="0 0 0"/>
+            <inertia ixx="0.8" ixy="0" ixz="0" iyy="0.8" iyz="0" izz="0.8"/>
+        </inertial>
+    </link>
+
+    <gazebo reference="base_link">
+        <linear_damping>2.0</linear_damping>  <angular_damping>15.0</angular_damping> </gazebo>
+
+    <link name="thruster_left_link">
+        <visual><geometry><cylinder radius="0.04" length="0.02"/></geometry>
+        <material name="red"/></visual>
+        <inertial><mass value="0.1"/><inertia ixx="0.001" ixy="0" ixz="0" iyy="0.001" iyz="0" izz="0.001"/></inertial>
+    </link>
+    <joint name="thruster_left_joint" type="continuous">
+        <parent link="base_link"/>
+        <child link="thruster_left_link"/>
+        <origin xyz="-0.21 0.12 0" rpy="0 1.57 0"/>
+        <axis xyz="0 0 1"/>
+    </joint>
+    <gazebo>
+        <plugin filename="gz-sim-thruster-system" name="gz::sim::systems::Thruster">
+            <namespace>sauvc_bot</namespace>
+            <joint_name>thruster_left_joint</joint_name>
+            <thrust_coefficient>0.005</thrust_coefficient>
+            <fluid_density>1000</fluid_density>
+            <propeller_diameter>0.1</propeller_diameter>
+            <velocity_control>true</velocity_control>
+        </plugin>
+    </gazebo>
+
+    <link name="thruster_right_link">
+        <visual><geometry><cylinder radius="0.04" length="0.02"/></geometry>
+        <material name="red"/></visual>
+        <inertial><mass value="0.1"/><inertia ixx="0.001" ixy="0" ixz="0" iyy="0.001" iyz="0" izz="0.001"/></inertial>
+    </link>
+    <joint name="thruster_right_joint" type="continuous">
+        <parent link="base_link"/>
+        <child link="thruster_right_link"/>
+        <origin xyz="-0.21 -0.12 0" rpy="0 1.57 0"/>
+        <axis xyz="0 0 1"/>
+    </joint>
+    <gazebo>
+        <plugin filename="gz-sim-thruster-system" name="gz::sim::systems::Thruster">
+            <namespace>sauvc_bot</namespace>
+            <joint_name>thruster_right_joint</joint_name>
+            <thrust_coefficient>0.005</thrust_coefficient>
+            <fluid_density>1000</fluid_density>
+            <propeller_diameter>0.1</propeller_diameter>
+            <velocity_control>true</velocity_control>
+        </plugin>
+    </gazebo>
+
+    <link name="vertical_propeller_link">
+        <visual><geometry><cylinder radius="0.05" length="0.02"/></geometry>
+        <material name="green"/></visual>
+        <inertial><mass value="0.1"/><inertia ixx="0.001" ixy="0" ixz="0" iyy="0.001" iyz="0" izz="0.001"/></inertial>
+    </link>
+    <joint name="vertical_propeller_joint" type="continuous">
+        <parent link="base_link"/>
+        <child link="vertical_propeller_link"/>
+        <origin xyz="0 0 0.11" rpy="0 0 0"/>
+        <axis xyz="0 0 1"/>
+    </joint>
+    <gazebo>
+        <plugin filename="gz-sim-thruster-system" name="gz::sim::systems::Thruster">
+            <namespace>sauvc_bot</namespace>
+            <joint_name>vertical_propeller_joint</joint_name>
+            <thrust_coefficient>0.005</thrust_coefficient>
+            <fluid_density>1000</fluid_density>
+            <propeller_diameter>0.1</propeller_diameter>
+            <velocity_control>true</velocity_control>
+        </plugin>
+    </gazebo>
+
+    <link name="camera_link">
+        <visual><geometry><box size="0.05 0.05 0.05"/></geometry>
+        <material name="black"/></visual>
+    </link>
+    <joint name="camera_joint" type="fixed">
+        <parent link="base_link"/>
+        <child link="camera_link"/>
+        <origin xyz="0.22 0 0" rpy="0 0 0"/>
+    </joint>
+    <gazebo reference="camera_link">
+        <sensor name="front_camera" type="camera">
+            <pose>0 0 0 0 0 0</pose>
+            <visualize>true</visualize>
+            <update_rate>10</update_rate>
+            <topic>/camera/image_raw</topic>
+            <camera>
+                <horizontal_fov>1.089</horizontal_fov>
+                <image><width>640</width><height>480</height><format>R8G8B8</format></image>
+                <clip><near>0.1</near><far>100</far></clip>
+            </camera>
+        </sensor>
+    </gazebo>
+
+</robot>
